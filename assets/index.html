@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>아이유 - 팬명록</title>
+    <meta property="og:title" content="아이유 팬명록" />
+    <meta property="og:description" content="아티스트에게 응원 한마디!" />
+    <meta
+      property="og:image"
+      content="https://newsimg.sedaily.com/2019/12/31/1VSAE95B8P_1.jpg"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Noto Serif KR", serif;
+      }
+
+      .mypic {
+        width: 100%;
+        height: 300px;
+
+        background-image: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+          ),
+          url("https://newsimg.sedaily.com/2019/12/31/1VSAE95B8P_1.jpg");
+        background-position: center 30%;
+        background-size: cover;
+
+        color: white;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .post-section {
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto 20px auto;
+
+        box-shadow: 0px 0px 3px 0px black;
+        padding: 20px;
+      }
+
+      .post-section > button {
+        margin-top: 15px;
+      }
+
+      .myposts {
+        width: 95%;
+        max-width: 500px;
+        margin: auto;
+      }
+
+      .myposts > .post {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .mycomments {
+        width: 95%;
+        max-width: 500px;
+        margin: auto;
+        padding-top: 20px;
+      }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        set_temp();
+        show_posts();
+      });
+      function set_temp() {
+        fetch("http://spartacodingclub.shop/sparta_api/weather/seoul")
+          .then((res) => res.json())
+          .then((data) => {
+            //console.log(data['temp'])
+            //// temp를 뽑아서 JQuery를 이용해서 넣으면 됨
+            let temp = data["temp"];
+            $("#temp").text(temp);
+          });
+      }
+      function save_post() {
+        // 3. input를 받아서 변수에 저장하고 서버로 보내기
+        let nickname = $("#name").val();
+        let post = $("#post").val();
+        // console.log("input nickname, comment: ", nickname, comment)
+
+        let formData = new FormData();
+        formData.append("nickname_give", nickname);
+        formData.append("post_give", post);
+
+        fetch("/posts", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            //console.log(data)
+            alert(data["msg"]);
+            window.location.reload();
+          });
+      }
+      function show_posts() {
+        // 5. guestbook_get() 에서 팬명록 리스트를 받아서 돌면서 보여준다.
+        fetch("/posts")
+          .then((res) => res.json())
+          .then((data) => {
+            let rows = data["result"];
+            console.log(rows);
+
+            $("#post-list").empty();
+            rows.forEach((a) => {
+              let nickname = a["nickname"];
+              let post = a["post"];
+
+              console.log("nickname, post from app.py:", nickname, post);
+
+              let temp_html = `<div class="post">
+                                        <div class="post-body">
+                                            <blockquote class="blockquote mb-0">
+                                                <p>${post}</p>
+                                                <footer class="blockquote-footer">${nickname}</footer>
+                                            </blockquote>
+                                        </div>
+                                    </div>`;
+
+              $("#post-list").append(temp_html);
+            });
+          });
+        // alert(data["msg"])
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="mypic">
+      <h1>아이유 팬명록</h1>
+      <p>현재기온: <span id="temp">36</span>도</p>
+    </div>
+
+    <div class="post-section">
+      <h2>게시판</h2>
+      <p1> 게시글과 게시글 안에 댓글을 작성할 수 있어요</p1>
+
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="name" placeholder="url" />
+        <label for="floatingInput">닉네임</label>
+      </div>
+
+      <div class="form-floating">
+        <textarea
+          class="form-control"
+          placeholder="Leave a post here"
+          id="post"
+          style="height: 100px"
+        ></textarea>
+        <label for="floatingTextarea2">게시글</label>
+      </div>
+
+      <button onclick="save_post()" type="button" class="btn btn-dark">
+        게시글 작성
+      </button>
+    </div>
+
+    <div class="myposts" id="post-list">
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+            <button onclick="update_post()" type="button" class="btn btn-dark">
+                게시글 수정
+              </button>
+              <button onclick="delete_post()" type="button" class="btn btn-dark">
+                게시글 삭제
+              </button>
+              <button onclick="create_comment()" type="button" class="btn btn-dark">
+                댓글 생성
+              </button>
+              <button onclick="show_comment()" type="button" class="btn btn-dark">
+                댓글 목록 조회
+              </button>
+              
+              <div class="mycomments" id="comment-list">
+                <div class="card">
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <p>댓글1 새로운 앨범 너무 멋져요!</p>
+                      <footer class="blockquote-footer">호빵맨</footer>
+                      <button onclick="update_comment()" type="button" class="btn btn-dark">
+                          댓글 수정
+                        </button>
+                        <button onclick="delete_comment()" type="button" class="btn btn-dark">
+                          댓글 삭제
+                        </button>                    
+                    </blockquote>
+                  </div>
+                </div>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

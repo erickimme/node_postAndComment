@@ -1,0 +1,16 @@
+{
+  "name": "eric-shop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^17.10.0",
+    "mongoose": "^7.4.5"
+  }
+}
