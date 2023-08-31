@@ -3,29 +3,6 @@ import Post from '../schemas/post.schemas.js';
 
 const router = express.Router();
 
-// router.get('/posts/test2', async (req, res, next) => {
-//     try {
-//         console.log("hello posts")
-//         const post_list = await Post.find({}, { password: 0 }).sort("-createdAt").exec();
-//         const postPrint = post_list.map((post) => {
-//             return {
-//                 postId: post._id,
-//                 user: post.user,
-//                 title: post.title,
-//                 createdAt: post.createdAt,
-//             }
-//         });
-//         return res.status(200).json({ data: postPrint });
-//     } catch (error) {
-//         console.error(error);
-//         next(error);
-//     }
-// });
-
-router.get('/posts/test2', async (req, res, next) => {
-    console.log('hello')
-    res.status(200).json({ message: "hello" });
-})
 
 // 게시글 등록 API // 
 router.post('/posts', async (req, res, next) => {

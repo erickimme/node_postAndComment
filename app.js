@@ -16,15 +16,16 @@ const router = express.Router();
 app.use('/api', [router, postsRouter, commentsRouter]);
 
 // 서버 에러 처리
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send('서버 에러!');
-});
+// app.use((err, req, res, next) => {
+//   console.error(err);
+//   res.status(500).send('서버 에러!');
+//   next()
+// });
 
 // 404 처리 미들웨어
-app.use((req, res, next) => {
-  res.status(404).send('404 NOT FOUND');
-});
+// app.use((req, res, next) => {
+//   res.status(404).send('404 NOT FOUND');
+// });
 
 app.listen(PORT, () => {
   console.log(PORT, '포트로 서버가 열렸어요!');
